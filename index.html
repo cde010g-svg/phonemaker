@@ -5597,5 +5597,47 @@ function boot() {
 boot();
 
 </script>
+<script>
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+
+  const inputs = [...document.querySelectorAll('input, textarea')];
+  const input = inputs.find(el =>
+    el.offsetWidth > 0 &&
+    el.offsetHeight > 0 &&
+    !el.disabled
+  );
+
+  if (!input || input.value.trim() !== '동민이 형') return;
+
+  setTimeout(() => {
+    const text = '어 왜';
+    const setter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype, 'value'
+    )?.set;
+
+    if (input.tagName === 'TEXTAREA') {
+      const ts = Object.getOwnPropertyDescriptor(
+        window.HTMLTextAreaElement.prototype, 'value'
+      )?.set;
+      ts?.call(input, text);
+    } else {
+      setter?.call(input, text);
+    }
+
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+
+    const form = input.closest('form');
+    if (form) {
+      form.requestSubmit();
+    } else {
+      const sendBtn = [...document.querySelectorAll('button')]
+        .find(b => /전송|보내기|send/i.test(b.innerText));
+      sendBtn?.click();
+    }
+  }, 1000);
+});
+</script>
 </body>
 </html>
